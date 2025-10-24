@@ -1,0 +1,39 @@
+name: Daily Automated Commit - 24f2004489@ds.study.iitm.ac.in
+
+on:
+  schedule:
+    # Runs at 00:00 UTC every day (5:30 AM IST)
+    - cron: "0 0 * * *"
+  workflow_dispatch: # Allow manual triggers for testing
+
+jobs:
+  daily-commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup step for 24f2004489@ds.study.iitm.ac.in
+        run: |
+          echo "Running automated commit for 24f2004489@ds.study.iitm.ac.in"
+          date
+
+      - name: Create or update daily log
+        run: |
+          mkdir -p logs
+          echo "Automated commit on $(date -u '+%Y-%m-%d %H:%M:%S UTC')" >> logs/daily-updates.txt
+          echo "Workflow run: ${{ github.run_number }}" >> logs/daily-updates.txt
+          echo "---" >> logs/daily-updates.txt
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "24f2004489@ds.study.iitm.ac.in"
+          git config --local user.name "DevSync-AutoCommit-Bot"
+          git add -A
+          git diff --quiet && git diff --staged --quiet || git commit -m "Automated daily update - $(date -u '+%Y-%m-%d %H:%M:%S UTC') [skip ci]"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
